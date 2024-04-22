@@ -13,6 +13,7 @@ class WebSocketHandler {
         this.io = io;
         this.packetBuffer = [];
         this.isProcessing = false;
+        this.clientId = "";
         /**
          * Handles the connection event for a WebSocket client.
          * @param {Socket} socket - The Socket.IO socket instance.
@@ -25,6 +26,7 @@ class WebSocketHandler {
                 socket.join(userId);
             }
             socket.on('order:processed', (data) => {
+                this.clientId = data.userId;
                 this.enqueuePacket({ event: 'notification:order_response', data });
                 this.processNextPacket();
             });
@@ -63,7 +65,7 @@ class WebSocketHandler {
     handlePacket(packet) {
         const { event, data } = packet;
         console.log(`Processing event ${event} with data:`, data);
-        this.io.emit(event, data);
+        this.io.to(this.clientId).emit(event, data);
         this.isProcessing = false;
         this.processNextPacket();
     }

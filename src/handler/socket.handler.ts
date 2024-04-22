@@ -6,6 +6,7 @@ import { Server, Socket } from 'socket.io';
 export class WebSocketHandler {
   private packetBuffer: any[] = [];
   private isProcessing = false;
+  private clientId = "";
 
   /**
    * Creates an instance of WebSocketHandler.
@@ -28,6 +29,7 @@ export class WebSocketHandler {
     }
 
     socket.on('order:processed', (data) => {
+      this.clientId = data.userId;
       this.enqueuePacket({ event: 'notification:order_response', data });
       this.processNextPacket();
     });
@@ -72,7 +74,7 @@ export class WebSocketHandler {
   private handlePacket(packet: any) {
     const { event, data } = packet;
     console.log(`Processing event ${event} with data:`, data);
-    this.io.emit(event, data);
+    this.io.to(this.clientId).emit(event, data);
     this.isProcessing = false;
     this.processNextPacket(); 
   }
