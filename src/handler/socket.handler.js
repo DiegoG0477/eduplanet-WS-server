@@ -22,6 +22,7 @@ class WebSocketHandler {
             var _a;
             const userId = (_a = socket.handshake.headers) === null || _a === void 0 ? void 0 : _a.userId;
             console.log('Client connected.');
+            console.log('User ID subscription:', userId);
             if (userId) {
                 socket.join(userId);
             }
@@ -64,6 +65,7 @@ class WebSocketHandler {
      */
     handlePacket(packet) {
         const { event, data } = packet;
+        console.log('to:', this.clientId);
         console.log(`Processing event ${event} with data:`, data);
         this.io.to(this.clientId).emit(event, data);
         this.isProcessing = false;
