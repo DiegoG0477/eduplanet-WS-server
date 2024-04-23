@@ -21,11 +21,11 @@ export class WebSocketHandler {
    * @param {Socket} socket - The Socket.IO socket instance.
    */
   private handleConnection = (socket: Socket) => {
-    const userId = socket.handshake.headers?.userId;
+    const userId = socket.handshake.auth.userId;
     console.log('Client connected.');
     console.log('User ID subscription:', userId);
 
-    if (userId) {
+    if (userId !== undefined) {
       socket.join(userId);
     }
 

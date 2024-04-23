@@ -19,11 +19,10 @@ class WebSocketHandler {
          * @param {Socket} socket - The Socket.IO socket instance.
          */
         this.handleConnection = (socket) => {
-            var _a;
-            const userId = (_a = socket.handshake.headers) === null || _a === void 0 ? void 0 : _a.userId;
+            const userId = socket.handshake.auth.userId;
             console.log('Client connected.');
             console.log('User ID subscription:', userId);
-            if (userId) {
+            if (userId !== undefined) {
                 socket.join(userId);
             }
             socket.on('order:processed', (data) => {
